@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regrouping Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F9D62;
+  --green-soft:#E4F6EC;
+  --blue:#2C6FD1;
+  --blue-soft:#E6EFFB;
+  --purple:#7248B4;
+  --purple-soft:#F0E9FA;
+  --red:#D63A3A;
+  --red-soft:#FCEAEA;
+  --ink:#1E2430;
+  --muted:#5C6577;
+  --paper:#FFFFFF;
+  --bg:#F7F5FB;
+  --cell:66px;
+  --accent:var(--blue);
+  --accent-soft:var(--blue-soft);
+}
+*{box-sizing:border-box;}
+[hidden]{display:none !important;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Andika','Comic Sans MS',Verdana,sans-serif;
+  font-size:18px;
+  line-height:1.5;
+  -webkit-text-size-adjust:100%;
+}
+button{font-family:'Fredoka',sans-serif;font-size:18px;cursor:pointer;}
+input{font-family:'Andika',Verdana,sans-serif;}
+
+/* ---------- header ---------- */
+.topbar{
+  background:var(--paper);
+  border-bottom:3px solid var(--accent);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  flex-wrap:wrap;
+  transition:border-color .25s;
+}
+.brand{font-family:'Fredoka',sans-serif;font-size:22px;color:var(--accent);transition:color .25s;}
+.dots{display:flex;gap:9px;align-items:center;}
+.dot{width:16px;height:16px;border-radius:50%;background:#DDD8E6;}
+.dot.done{background:var(--green);}
+.dot.now{background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+.count{font-size:16px;color:var(--muted);}
+
+/* ---------- card ---------- */
+main{max-width:760px;margin:0 auto;padding:26px 16px 70px;}
+.card{
+  background:var(--paper);
+  border-radius:22px;
+  padding:26px 20px 24px;
+  box-shadow:0 6px 0 var(--accent-soft);
+  border:2px solid var(--accent-soft);
+  transition:box-shadow .25s,border-color .25s;
+}
+.kind{
+  font-family:'Fredoka',sans-serif;
+  font-size:20px;
+  color:var(--accent);
+  text-align:center;
+  margin:0 0 4px;
+}
+.hint{font-size:16px;color:var(--muted);text-align:center;margin:0 0 20px;}
+
+/* ---------- problem grid ---------- */
+.grid{display:grid;gap:9px;justify-content:center;align-items:center;}
+.grid.add{grid-template-columns:repeat(5,var(--cell));}
+.grid.sub{grid-template-columns:repeat(4,var(--cell));}
+
+.digit{
+  height:var(--cell);
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;font-weight:700;
+  position:relative;
+  border-radius:12px;
+}
+.digit.tap{cursor:pointer;}
+.digit.tap:hover{background:var(--purple-soft);}
+.digit.tap:focus-visible{outline:3px solid var(--purple);outline-offset:2px;}
+.digit.struck::after{
+  content:"";position:absolute;left:14%;right:14%;top:48%;
+  height:5px;border-radius:3px;background:var(--red);
+  transform:rotate(-40deg);
+}
+.op{font-size:40px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;height:var(--cell);}
+
+.box{
+  width:var(--cell);height:var(--cell);
+  font-size:38px;font-weight:700;text-align:center;
+  border:3px dashed #C9C2D8;border-radius:14px;
+  background:#FCFBFE;color:var(--ink);
+  padding:0;
+}
+.box:focus{outline:none;border-color:var(--accent);border-style:solid;background:#fff;box-shadow:0 0 0 4px var(--accent-soft);}
+.box.wrong{border-color:var(--red);border-style:solid;background:var(--red-soft);animation:shake .4s;}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.work{
+  height:48px;width:var(--cell);
+  font-size:26px;font-weight:700;text-align:center;
+  border:3px dashed var(--green);border-radius:12px;
+  background:var(--green-soft);color:var(--green);
+  padding:0;
+  justify-self:center;
+}
+.work:focus{outline:none;border-style:solid;box-shadow:0 0 0 4px #D3EFE0;}
+
+/* second-tier regroup box (used when a regrouped value is crossed out again) */
+.work.tier2{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);}
+.work.tier2:focus{box-shadow:0 0 0 4px var(--blue-soft);}
+
+.wrap{position:relative;width:var(--cell);justify-self:center;}
+.wrap .work{width:100%;justify-self:auto;}
+.wrap.struck::after{
+  content:"";position:absolute;left:8%;right:8%;top:48%;
+  height:4px;border-radius:2px;background:var(--red);
+  transform:rotate(-24deg);pointer-events:none;
+}
+.chip{
+  position:absolute;top:-11px;right:-11px;
+  width:27px;height:27px;border-radius:50%;padding:0;
+  border:none;background:var(--red);color:#fff;
+  font-size:15px;line-height:1;
+  box-shadow:0 2px 0 #A02C2C;
+}
+.chip:active{transform:translateY(2px);box-shadow:none;}
+
+/* mode toggle */
+.mode{display:flex;border:3px solid var(--purple);border-radius:12px;overflow:hidden;}
+.mode .pill{border:none;background:#fff;color:var(--purple);padding:8px 15px;font-size:16px;}
+.mode .pill.on{background:var(--purple);color:#fff;}
+
+.rule{grid-column:1/-1;height:6px;background:var(--ink);border-radius:3px;margin:4px 0;}
+
+.helpbtn{
+  width:34px;height:34px;border-radius:50%;
+  border:none;background:var(--purple);color:#fff;
+  font-size:18px;line-height:1;
+  justify-self:center;
+  box-shadow:0 3px 0 #55338C;
+}
+.helpbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #55338C;}
+
+/* ---------- feedback + buttons ---------- */
+.feedback{
+  min-height:30px;text-align:center;margin:20px 0 4px;
+  font-size:20px;font-family:'Fredoka',sans-serif;
+}
+.feedback.good{color:var(--green);}
+.feedback.fix{color:var(--red);}
+.actions{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.btn{
+  border:none;border-radius:14px;padding:14px 30px;color:#fff;font-size:19px;
+}
+.btn.check{background:var(--accent);box-shadow:0 4px 0 rgba(0,0,0,.22);}
+.btn.next{background:var(--green);box-shadow:0 4px 0 #14764A;}
+.btn:active{transform:translateY(3px);box-shadow:none;}
+.btn.ghost{background:#fff;color:var(--purple);border:3px solid var(--purple);box-shadow:none;}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(30,36,48,.45);z-index:20;}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(370px,88vw);
+  background:var(--paper);z-index:21;
+  padding:22px 20px;overflow-y:auto;
+  border-left:5px solid var(--purple);
+  box-shadow:-8px 0 26px rgba(30,36,48,.18);
+  animation:slide .22s ease-out;
+}
+@keyframes slide{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.drawer h2{font-family:'Fredoka',sans-serif;color:var(--purple);font-size:22px;margin:0 0 2px;}
+.drawer .sub{font-size:16px;color:var(--muted);margin:0 0 18px;}
+.step{
+  border:3px solid var(--purple-soft);border-radius:16px;
+  padding:14px;margin-bottom:14px;
+}
+.step p{margin:0 0 8px;font-size:17px;}
+.bignum{font-size:34px;font-weight:700;color:var(--purple);text-align:center;margin:6px 0;}
+.eq{display:flex;align-items:center;justify-content:center;gap:10px;font-size:32px;font-weight:700;}
+.mini{
+  width:74px;height:56px;font-size:30px;font-weight:700;text-align:center;
+  border:3px dashed var(--purple);border-radius:12px;background:#fff;color:var(--purple);padding:0;
+}
+.mini:focus{outline:none;border-style:solid;box-shadow:0 0 0 4px var(--purple-soft);}
+.mini.ok{border-style:solid;border-color:var(--green);color:var(--green);background:var(--green-soft);}
+.step.last{border-color:var(--green-soft);background:var(--green-soft);}
+.close{margin-top:6px;width:100%;padding:13px;border-radius:14px;border:3px solid var(--purple);background:#fff;color:var(--purple);}
+
+/* ---------- done screen ---------- */
+.done{text-align:center;padding:14px 4px;}
+.done h2{font-family:'Fredoka',sans-serif;font-size:30px;color:var(--green);margin:6px 0 6px;}
+.done p{font-size:18px;color:var(--muted);margin:0 0 22px;}
+.trophy{font-size:64px;}
+
+/* ---------- confetti ---------- */
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30;}
+.piece{position:absolute;top:-24px;width:12px;height:18px;border-radius:3px;animation:fall linear forwards;}
+@keyframes fall{to{transform:translateY(104vh) rotate(640deg);opacity:.9;}}
+
+@media (max-width:560px){
+  :root{--cell:54px;}
+  .digit{font-size:36px;}
+  .box{font-size:30px;}
+  .work{font-size:22px;height:42px;}
+  main{padding:18px 10px 60px;}
+  .card{padding:20px 12px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand" id="brand">Regrouping Practice</div>
+  <div class="dots" id="dots"></div>
+  <div class="count" id="count">Problem 1 of 4</div>
+  <div class="mode" id="mode">
+    <button class="pill on" type="button" data-mode="basic">Regular</button>
+    <button class="pill" type="button" data-mode="zero">Across zero</button>
+  </div>
+</div>
+
+<main>
+  <div class="card" id="card">
+    <h1 class="kind" id="kind">Addition</h1>
+    <p class="hint" id="hint"></p>
+    <div class="grid" id="grid"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="actions">
+      <button class="btn check" id="checkBtn">Check my work</button>
+      <button class="btn next" id="nextBtn" hidden>Next problem</button>
+    </div>
+  </div>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Help"></aside>
+<div id="confetti"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CHEERS = [
+    "Nailed it!",
+    "That's exactly right!",
+    "Beautiful regrouping!",
+    "Every digit is perfect!",
+    "You've got this down!",
+    "Sharp work!",
+    "Right on the money!"
+  ];
+
+  var state = { i:0, mode:'basic', problems:[], p:null, answerBoxes:[], workBoxes:[], workBoxes2:[], helpBtns:[] };
+
+  var grid = document.getElementById('grid');
+  var kindEl = document.getElementById('kind');
+  var hintEl = document.getElementById('hint');
+  var fb = document.getElementById('feedback');
+  var checkBtn = document.getElementById('checkBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var dotsEl = document.getElementById('dots');
+  var countEl = document.getElementById('count');
+  var drawer = document.getElementById('drawer');
+  var scrim = document.getElementById('scrim');
+  var card = document.getElementById('card');
+
+  function rnd(lo,hi){ return Math.floor(Math.random()*(hi-lo+1))+lo; }
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function digits(n,len){ return String(n).padStart(len,'0').split('').map(Number); }
+
+  function makeAdd(){
+    while(true){
+      var a=rnd(105,879), b=rnd(105,879);
+      var ao=a%10, bo=b%10, at=Math.floor(a/10)%10, bt=Math.floor(b/10)%10;
+      var c1 = (ao+bo>=10)?1:0;
+      var c2 = (at+bt+c1>=10)?1:0;
+      if(c1||c2) return {type:'add', a:a, b:b, result:a+b};
+    }
+  }
+  function makeSub(){
+    while(true){
+      var a=rnd(210,999), b=rnd(105,a-11);
+      if(String(b).length!==3) continue;
+      var ao=a%10, bo=b%10, at=Math.floor(a/10)%10, bt=Math.floor(b/10)%10;
+      var needOnes = ao<bo;
+      var needTens = at < (bt + (needOnes?1:0));
+      if(needOnes||needTens) return {type:'sub', a:a, b:b, result:a-b};
+    }
+  }
+  function newSet(){
+    var sub = (state.mode==='zero') ? makeSubZero : makeSub;
+    return [makeAdd(), makeAdd(), sub(), sub()];
+  }
+
+  // Top number has 0 tens, so the ones must borrow through the zero.
+  function makeSubZero(){
+    while(true){
+      var h=rnd(2,9);
+      var o=rnd(1,8);
+      var a=h*100+o;
+      var bh=rnd(1,h-1);
+      var bt=rnd(1,9);
+      var bo=rnd(o+1,9);
+      var b=bh*100+bt*10+bo;
+      if(b>=100 && b<a) return {type:'sub', a:a, b:b, result:a-b, zero:true};
+    }
+  }
+
+  function theme(t){
+    var root=document.documentElement;
+    if(t==='add'){ root.style.setProperty('--accent','var(--blue)'); root.style.setProperty('--accent-soft','var(--blue-soft)'); }
+    else { root.style.setProperty('--accent','var(--purple)'); root.style.setProperty('--accent-soft','var(--purple-soft)'); }
+  }
+
+  function el(tag, cls){ var e=document.createElement(tag); if(cls) e.className=cls; return e; }
+  function place(e,col,row){ e.style.gridColumn=col; e.style.gridRow=row; grid.appendChild(e); return e; }
+
+  function digitsOnly(inp){
+    inp.setAttribute('inputmode','numeric');
+    inp.addEventListener('input', function(){
+      this.value = this.value.replace(/[^0-9]/g,'').slice(0, Number(this.maxLength));
+    });
+  }
+
+  function renderDots(){
+    dotsEl.innerHTML='';
+    for(var k=0;k<4;k++){
+      var d=el('div','dot');
+      if(k<state.i) d.classList.add('done');
+      else if(k===state.i) d.classList.add('now');
+      dotsEl.appendChild(d);
+    }
+    countEl.textContent = 'Problem '+(state.i+1)+' of 4';
+  }
+
+  function render(){
+    var p = state.problems[state.i];
+    state.p = p;
+    state.answerBoxes=[]; state.workBoxes=[]; state.workBoxes2=[]; state.helpBtns=[];
+    theme(p.type);
+    grid.innerHTML='';
+    fb.textContent=''; fb.className='feedback';
+    nextBtn.hidden=true; checkBtn.hidden=false;
+    renderDots();
+
+    if(p.type==='add'){
+      kindEl.textContent='Addition';
+      hintEl.textContent='Start with the ones. Write any carry in a green box.';
+      grid.className='grid add';
+      buildAdd(p);
+    }else{
+      kindEl.textContent='Subtraction';
+      hintEl.textContent='Tap a top number to cross it out, then write its new value above.';
+      grid.className='grid sub';
+      buildSub(p);
+    }
+  }
+
+  // columns: op is column 1. Place value columns follow.
+  function buildAdd(p){
+    var A=digits(p.a,3), B=digits(p.b,3);
+    // rows: 1 carry, 2 top, 3 bottom, 4 rule, 5 answer
+    for(var i=0;i<2;i++){                       // carry above hundreds(col3) and tens(col4)
+      var w=el('input','work');
+      w.type='text'; w.maxLength=1; w.setAttribute('aria-label','carry box');
+      digitsOnly(w);
+      place(w, 3+i, 1);
+      state.workBoxes.push(w);
+    }
+    for(var j=0;j<3;j++) place(el('div','digit'),3+j,2).textContent=A[j];
+    place(el('div','op'),1,3).textContent='+';
+    for(var k=0;k<3;k++) place(el('div','digit'),3+k,3).textContent=B[k];
+    place(el('div','rule'),'1 / -1',4);
+    for(var m=0;m<4;m++){
+      var b=el('input','box');
+      b.type='text'; b.maxLength=1; b.setAttribute('aria-label','answer box');
+      digitsOnly(b);
+      wireAnswer(b);
+      place(b, 2+m, 5);
+      state.answerBoxes.push(b);
+    }
+  }
+
+  function refreshHelp(idx){
+    var p=state.p;
+    if(!p || p.type!=='sub') return;
+    var top=digits(p.a,3)[idx];
+    var v=parseInt(state.workBoxes[idx].value,10);
+    var zeroCol = (idx===1 && top===0);
+    state.helpBtns[idx].hidden = !(zeroCol || v>=10);
+  }
+
+  function buildSub(p){
+    var A=digits(p.a,3), B=digits(p.b,3);
+    // rows: 1 help, 2 second regroup tier, 3 first regroup tier, 4 top, 5 bottom, 6 rule, 7 answer
+    for(var i=0;i<3;i++){
+      (function(idx){
+        var hb=el('button','helpbtn');
+        hb.type='button'; hb.textContent='?'; hb.hidden=true;
+        hb.setAttribute('aria-label','Help with this column');
+        hb.addEventListener('click', function(){ openHelp(idx); });
+        place(hb, 2+idx, 1);
+
+        var w2=el('input','work tier2');
+        w2.type='text'; w2.maxLength=2; w2.hidden=true;
+        w2.setAttribute('aria-label','new value after crossing out');
+        digitsOnly(w2);
+        place(w2, 2+idx, 2);
+
+        var wrap=el('div','wrap');
+        var w=el('input','work');
+        w.type='text'; w.maxLength=2; w.setAttribute('aria-label','regroup box');
+        digitsOnly(w);
+        var chip=el('button','chip');
+        chip.type='button'; chip.textContent='\u2715'; chip.hidden=true;
+        chip.setAttribute('aria-label','Cross this out and write a new value above it');
+        wrap.appendChild(w); wrap.appendChild(chip);
+        place(wrap, 2+idx, 3);
+
+        var d=el('div','digit tap');
+        d.textContent=A[idx]; d.tabIndex=0;
+        d.setAttribute('role','button');
+        function flip(){ d.classList.toggle('struck'); }
+        d.addEventListener('click', flip);
+        d.addEventListener('keydown', function(e){
+          if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); }
+        });
+        place(d, 2+idx, 4);
+
+        chip.addEventListener('click', function(){
+          var on = wrap.classList.toggle('struck');
+          w2.hidden = !on;
+          if(on){ w2.focus(); } else { w2.value=''; }
+        });
+
+        w.addEventListener('input', function(){
+          if(w.value.length>0){
+            d.classList.add('struck');
+            chip.hidden=false;
+          } else {
+            chip.hidden=true;
+            wrap.classList.remove('struck');
+            w2.hidden=true; w2.value='';
+          }
+          refreshHelp(idx);
+        });
+
+        state.workBoxes.push(w);
+        state.workBoxes2.push(w2);
+        state.helpBtns.push(hb);
+      })(i);
+    }
+    place(el('div','op'),1,5).textContent='\u2212';
+    for(var k=0;k<3;k++) place(el('div','digit'),2+k,5).textContent=B[k];
+    place(el('div','rule'),'1 / -1',6);
+    for(var m=0;m<3;m++){
+      var b=el('input','box');
+      b.type='text'; b.maxLength=1; b.setAttribute('aria-label','answer box');
+      digitsOnly(b);
+      wireAnswer(b);
+      place(b, 2+m, 7);
+      state.answerBoxes.push(b);
+    }
+    for(var z=0;z<3;z++) refreshHelp(z);
+  }
+
+  function wireAnswer(b){
+    b.addEventListener('input', function(){
+      b.classList.remove('wrong');
+    });
+    b.addEventListener('keydown', function(e){
+      var i=state.answerBoxes.indexOf(b);
+      if(e.key==='ArrowLeft' && i>0){ e.preventDefault(); state.answerBoxes[i-1].focus(); }
+      if(e.key==='ArrowRight' && i<state.answerBoxes.length-1){ e.preventDefault(); state.answerBoxes[i+1].focus(); }
+    });
+  }
+
+  /* ----- help drawer ----- */
+  function openHelp(idx){
+    var p=state.p;
+    var top=digits(p.a,3)[idx];
+    if(idx===1 && top===0){ zeroHelp(); return; }
+    var v=parseInt(state.workBoxes[idx].value,10);
+    if(!(v>=10)) return;
+    var take=digits(p.b,3)[idx];
+    var ones=v-10;
+    var answer=10-take;
+
+    drawer.innerHTML='';
+    var h=el('h2'); h.textContent='Break it apart'; drawer.appendChild(h);
+    var s=el('p','sub'); s.textContent='Take it one small step at a time.'; drawer.appendChild(s);
+
+    var s1=el('div','step');
+    var p1=el('p'); p1.textContent='What makes up '+v+'?';
+    var n1=el('div','bignum'); n1.textContent='10 + '+ones;
+    s1.appendChild(p1); s1.appendChild(n1); drawer.appendChild(s1);
+
+    var s2=el('div','step');
+    var p2=el('p'); p2.textContent='Now take '+take+' away from the 10.';
+    var eq=el('div','eq');
+    var t=el('span'); t.textContent='10 \u2212 '+take+' =';
+    var mini=el('input','mini'); mini.type='text'; mini.maxLength=2; mini.setAttribute('aria-label','ten minus '+take);
+    digitsOnly(mini);
+    eq.appendChild(t); eq.appendChild(mini);
+    s2.appendChild(p2); s2.appendChild(eq); drawer.appendChild(s2);
+
+    var s3=el('div','step last'); s3.hidden=true;
+    var p3=el('p'); p3.textContent='Add the '+ones+' back on.';
+    var n3=el('div','bignum'); n3.textContent=answer+' + '+ones+' = ?';
+    var p3b=el('p'); p3b.textContent='Work that one out, then write it in the problem.';
+    s3.appendChild(p3); s3.appendChild(n3); s3.appendChild(p3b); drawer.appendChild(s3);
+
+    mini.addEventListener('input', function(){
+      if(mini.value===String(answer)){ mini.classList.add('ok'); s3.hidden=false; }
+      else { mini.classList.remove('ok'); s3.hidden=true; }
+    });
+
+    var c=el('button','close'); c.type='button'; c.textContent='Back to the problem';
+    c.addEventListener('click', closeHelp);
+    drawer.appendChild(c);
+
+    drawer.hidden=false; scrim.hidden=false;
+    mini.focus();
+  }
+  function zeroHelp(){
+    var h=digits(state.p.a,3)[0];
+    drawer.innerHTML='';
+    var t=el('h2'); t.textContent='No tens to take'; drawer.appendChild(t);
+    var s=el('p','sub'); s.textContent='Go next door and trade.'; drawer.appendChild(s);
+
+    var s1=el('div','step');
+    var p1=el('p'); p1.textContent='The tens are 0. There is nothing there to give away.';
+    s1.appendChild(p1); drawer.appendChild(s1);
+
+    var s2=el('div','step');
+    var p2=el('p'); p2.textContent='So trade 1 hundred for tens.';
+    var eq=el('div','eq');
+    var lab=el('span'); lab.textContent='1 hundred =';
+    var mini=el('input','mini'); mini.type='text'; mini.maxLength=2;
+    mini.setAttribute('aria-label','one hundred equals how many tens');
+    digitsOnly(mini);
+    var unit=el('span'); unit.textContent='tens';
+    unit.style.fontSize='22px';
+    eq.appendChild(lab); eq.appendChild(mini); eq.appendChild(unit);
+    s2.appendChild(p2); s2.appendChild(eq); drawer.appendChild(s2);
+
+    var s3=el('div','step last'); s3.hidden=true;
+    var a1=el('p'); a1.textContent='Tap the '+h+' and write '+(h-1)+' above it. You spent one hundred.';
+    var a2=el('p'); a2.textContent='Write 10 in the tens box. Those are your new tens.';
+    var a3=el('p'); a3.textContent='Now the ones need one of them. Tap \u2715 on the 10 and write 9 above it.';
+    s3.appendChild(a1); s3.appendChild(a2); s3.appendChild(a3);
+    drawer.appendChild(s3);
+
+    mini.addEventListener('input', function(){
+      if(mini.value==='10'){ mini.classList.add('ok'); s3.hidden=false; }
+      else { mini.classList.remove('ok'); s3.hidden=true; }
+    });
+
+    var c=el('button','close'); c.type='button'; c.textContent='Back to the problem';
+    c.addEventListener('click', closeHelp);
+    drawer.appendChild(c);
+
+    drawer.hidden=false; scrim.hidden=false;
+    mini.focus();
+  }
+
+  function closeHelp(){
+    drawer.hidden=true; scrim.hidden=true;
+  }
+  scrim.addEventListener('click', closeHelp);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !drawer.hidden) closeHelp(); });
+
+  /* ----- checking ----- */
+  checkBtn.addEventListener('click', function(){
+    var boxes=state.answerBoxes;
+    var want=String(state.p.result).padStart(boxes.length,' ');
+    var ok=true;
+    for(var i=0;i<boxes.length;i++){
+      var expect=want.charAt(i).trim();
+      var got=boxes[i].value.trim();
+      // An unused leading box may be left empty or filled with 0 — both count.
+      var good = (expect==='') ? (got==='' || got==='0') : (got===expect);
+      if(good){ boxes[i].classList.remove('wrong'); }
+      else { boxes[i].classList.add('wrong'); ok=false; }
+    }
+    if(ok){
+      fb.className='feedback good';
+      fb.textContent=pick(CHEERS);
+      checkBtn.hidden=true; nextBtn.hidden=false;
+      nextBtn.textContent = (state.i===3) ? 'See my finish' : 'Next problem';
+      confetti();
+      nextBtn.focus();
+    }else{
+      fb.className='feedback fix';
+      fb.textContent='Look at the red boxes and try those again.';
+      for(var j=boxes.length-1;j>=0;j--){ if(boxes[j].classList.contains('wrong')){ boxes[j].focus(); break; } }
+    }
+  });
+
+  nextBtn.addEventListener('click', function(){
+    state.i++;
+    if(state.i>3) finish();
+    else render();
+  });
+
+  function finish(){
+    theme('sub');
+    card.innerHTML =
+      '<div class="done">'+
+      '<div class="trophy">\u2B50</div>'+
+      '<h2>All four done!</h2>'+
+      '<p>Two addition problems and two subtraction problems, regrouped and solved.</p>'+
+      '<button class="btn next" id="againBtn">Start a new set</button>'+
+      '</div>';
+    dotsEl.innerHTML='';
+    for(var k=0;k<4;k++){ var d=el('div','dot done'); dotsEl.appendChild(d); }
+    countEl.textContent='Finished';
+    confetti();
+    document.getElementById('againBtn').addEventListener('click', function(){ location.reload(); });
+  }
+
+  /* ----- confetti ----- */
+  function confetti(){
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var box=document.getElementById('confetti');
+    var colors=['#1F9D62','#2C6FD1','#7248B4','#4FC08D','#89B6F0'];
+    for(var i=0;i<70;i++){
+      var d=el('div','piece');
+      d.style.left=(Math.random()*100)+'%';
+      d.style.background=pick(colors);
+      d.style.animationDelay=(Math.random()*0.45)+'s';
+      d.style.animationDuration=(1.5+Math.random()*1.3)+'s';
+      d.style.width=(8+Math.random()*8)+'px';
+      box.appendChild(d);
+    }
+    setTimeout(function(){ box.innerHTML=''; }, 3400);
+  }
+
+  /* ----- mode toggle ----- */
+  var modeEl=document.getElementById('mode');
+
+  function paintMode(){
+    var pills=modeEl.querySelectorAll('.pill');
+    for(var i=0;i<pills.length;i++){
+      pills[i].classList.toggle('on', pills[i].getAttribute('data-mode')===state.mode);
+    }
+  }
+
+  function untouched(){
+    var all=state.answerBoxes.concat(state.workBoxes, state.workBoxes2);
+    for(var i=0;i<all.length;i++){ if(all[i].value!=='') return false; }
+    return true;
+  }
+
+  modeEl.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.pill') : null;
+    if(!btn) return;
+    var m=btn.getAttribute('data-mode');
+    if(m===state.mode) return;
+    state.mode=m;
+    paintMode();
+    var make = (m==='zero') ? makeSubZero : makeSub;
+    for(var k=0;k<4;k++){
+      if(k<state.i) continue;
+      if(state.problems[k].type!=='sub') continue;
+      if(k===state.i && !untouched()) continue;
+      state.problems[k]=make();
+      if(k===state.i) render();
+    }
+  });
+
+  state.problems=newSet();
+  paintMode();
+  render();
+})();
+</script>
+</body>
+</html>
